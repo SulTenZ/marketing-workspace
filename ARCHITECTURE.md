@@ -192,6 +192,8 @@ Notification writer dan audit writer menerima transaction/query executor pemangg
 
 Request ID → recovery/logging → body limit/decode → autentikasi bila privat → validasi Origin/CSRF untuk unsafe browser request → service → transaksi/repository → response. Urutan detail middleware harus menjaga error JSON konsisten dan redaksi log. Login memiliki Origin check dan durable rate limit; cron memakai jalur autentikasi terpisah.
 
+Implementasi fondasi M1-02 menempatkan boundary HTTP di luar Chi mux agar empty-router/404 juga terlindungi: request ID → security headers → access log aman → recovery → deadline → Origin → body limit → mux. Auth/CSRF dan domain belum dipasang, tidak ada akses DB. Launcher dan adapter memakai constructor yang sama; detail config, cancellation dan batas verifikasi dicatat pada ADR-002 di architecture-decisions.md. Log tidak memakai URL/path/query atau forwarded headers dari request.
+
 Actor berasal dari session, bukan `actor_id` atau `creator_id` klien. Decode menolak unknown fields. Handler membedakan input rusak, field invalid, forbidden, state conflict, dan dependency failure. Context cancellation/timeout diteruskan sampai SQL dan transport; jangan menampilkan stack trace atau detail SQL ke pengguna.
 
 ## Kontrak API

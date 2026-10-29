@@ -18,7 +18,21 @@ try {
     redirect: 'error',
   });
   assert.equal(api.status, 404, 'Scaffold API belum memiliki endpoint produk.');
-  console.log('PASS: web SSR 200 (Bahasa Indonesia) dan server Go/Chi lokal merespons.');
+  assert.match(api.headers.get('content-type') ?? '', /application\/json/);
+  assert.equal(api.headers.get('cache-control'), 'no-store');
+  const missing = await api.json();
+  assert.equal(missing.error.code, 'NOT_FOUND');
+  assert.match(missing.error.request_id, /^req_/);
+  assert.equal(missing.error.request_id, api.headers.get('x-request-id'));
+
+  const unsafe = await fetch('http://127.0.0.1:8080/api/v1/tasks/synthetic', {
+    method: 'POST',
+    signal: AbortSignal.timeout(5_000),
+    redirect: 'error',
+  });
+  assert.equal(unsafe.status, 403, 'Origin yang hilang harus ditolak.');
+  assert.equal((await unsafe.json()).error.code, 'INVALID_ORIGIN');
+  console.log('PASS: web SSR Indonesia; API JSON, request ID, no-store, dan penolakan Origin lokal.');
 } catch (error) {
   console.error('FAIL: ' + error.message);
   console.error('Jalankan pnpm dev:web dan pnpm dev:api sesuai README.md.');

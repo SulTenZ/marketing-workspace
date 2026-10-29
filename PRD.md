@@ -388,7 +388,7 @@ Error format:
 }
 ```
 
-Status: 400 JSON/query rusak; 401 sesi tidak valid; 403 izin/CSRF; 404 resource tidak ada; 409 state/version/idempotency conflict; 422 validasi field; 429 rate limit dengan Retry-After; 503 dependensi tidak tersedia; 500 error internal tanpa detail SQL/stack. Create 201, read/update/aksi 200, logout/delete subscription 204.
+Status: 400 JSON/query rusak; 401 sesi tidak valid; 403 izin/Origin/CSRF; 404 resource tidak ada; 405 method tidak diizinkan; 409 state/version/idempotency conflict; 413 request melebihi 256 KiB; 415 Content-Type bukan JSON pada handler JSON; 422 validasi field; 429 rate limit dengan Retry-After; 503 dependensi/konfigurasi tidak tersedia atau request timeout/cancellation; 500 error internal tanpa detail SQL/stack. Create 201, read/update/aksi 200, logout/delete subscription 204. Rincian status HTTP umum ini diperjelas pada M1-02; tidak menambah endpoint atau mengubah aturan bisnis.
 
 ### 14.2 Endpoint inventory normatif
 
