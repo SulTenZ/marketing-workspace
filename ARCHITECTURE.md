@@ -95,8 +95,7 @@ marketing-workspace/
           shared/
         service-worker.ts
       static/icons/
-      svelte.config.js
-      vite.config.ts
+      vite.config.ts                # SvelteKit 3 + Svelte/Vite + adapter
       vercel.json
       package.json
     api/

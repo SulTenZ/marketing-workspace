@@ -1,0 +1,30 @@
+{
+  "name": "marketing-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.10.0",
+  "engines": {
+    "node": "24.22.2",
+    "pnpm": "11.10.0"
+  },
+  "scripts": {
+    "dev": "pnpm dev:web",
+    "dev:web": "pnpm --filter @marketing-workspace/web dev --host 127.0.0.1",
+    "dev:api": "cd apps/api && go run ./cmd/server",
+    "check:tooling": "node scripts/check-tooling.mjs",
+    "format": "pnpm --filter @marketing-workspace/web format",
+    "format:api": "cd apps/api && gofmt -w .",
+    "lint": "pnpm --filter @marketing-workspace/web lint",
+    "check:web": "pnpm --filter @marketing-workspace/web check",
+    "check:api": "node scripts/check-api.mjs",
+    "check": "pnpm check:tooling && pnpm check:web && pnpm check:api",
+    "test:web": "pnpm --filter @marketing-workspace/web test",
+    "test:api": "cd apps/api && go test ./...",
+    "test": "pnpm test:web && pnpm test:api",
+    "test:smoke": "node scripts/smoke.mjs",
+    "build:web": "pnpm --filter @marketing-workspace/web build",
+    "build:api": "cd apps/api && go build -o ../../.cache/marketing-api ./cmd/server",
+    "build": "pnpm build:web && pnpm build:api",
+    "quality": "pnpm check && pnpm lint && pnpm test && pnpm build"
+  }
+}

@@ -6,7 +6,7 @@ Pelacak pekerjaan lokal untuk [PRD](PRD.md), [panduan agent](AGENTS.md), dan [ar
 
 ## Baseline dan cara pakai
 
-Dokumen proyek tersedia di root. Implementasi aplikasi belum tersedia pada pemeriksaan 29 Oktober 2026; seluruh task implementasi tetap `TODO`. Tidak ada asumsi kode, tests, preview, atau production sudah selesai. Pembuatan/perbaikan dokumen tidak dihitung sebagai progres implementasi.
+Baseline sebelum M1-01 hanya berisi dokumen proyek di root. Progres implementasi aktual mengikuti tabel dan bukti di bawah; preview/production tidak dianggap selesai dari hasil lokal. Pembuatan/perbaikan dokumen tidak dihitung sebagai progres implementasi.
 
 1. Baca sumber dan pilih task pada milestone pertama yang belum selesai. Jangan mulai milestone berikut sebelum gate sebelumnya `DONE`.
 2. Isi PIC pelaksana aktual dan ubah ke `IN_PROGRESS` saat mulai. PIC tracker adalah developer/agent pelaksana, bukan otomatis Sultan/Alvin sebagai PIC task produk. `—` berarti belum ditetapkan.
@@ -32,20 +32,20 @@ Angka `Selesai/Total` hanya menghitung baris implementasi Mx-NN, tidak termasuk 
 
 | Milestone | Status | Selesai/Total | Progres | Gate |
 |---|---|---|---|---|
-| M1 — Foundation, database, auth | TODO | 0/11 | 0% | M1-GATE: TODO |
+| M1 — Foundation, database, auth | IN_PROGRESS | 1/11 | 9,1% | M1-GATE: TODO |
 | M2 — Task & Direct Completion | TODO | 0/8 | 0% | M2-GATE: TODO |
 | M3 — Optional Review | TODO | 0/8 | 0% | M3-GATE: TODO |
 | M4 — Marketing & Dual Calendar | TODO | 0/6 | 0% | M4-GATE: TODO |
 | M5 — Event Reminder | TODO | 0/6 | 0% | M5-GATE: TODO |
 | M6 — PWA & Push | TODO | 0/6 | 0% | M6-GATE: TODO |
 | M7 — Hardening & Production | TODO | 0/8 | 0% | M7-GATE: TODO |
-| **Total implementasi** | **TODO** | **0/53** | **0%** | **0/7 gate selesai** |
+| **Total implementasi** | **IN_PROGRESS** | **1/53** | **1,9%** | **0/7 gate selesai** |
 
 ## Fokus sesi berikutnya
 
 | Task | Aksi berikutnya | PIC | Hambatan aktual |
 |---|---|---|---|
-| M1-01 | Siapkan monorepo dan periksa tooling/versi sebelum membuat scaffold | — | Belum ada hambatan terverifikasi |
+| M1-02 | Task berikutnya: boundary/config backend; belum dimulai, menunggu instruksi pengguna | — | Belum ada hambatan terverifikasi; aktifkan toolchain sesuai README saat melanjutkan |
 
 Jangan mengisi tanggal selesai, hasil test, nama branch/commit, atau penerimaan pengguna yang belum terjadi. Tidak ada target tanggal rilis sampai kapasitas pelaksana diketahui.
 
@@ -63,7 +63,7 @@ Sumber: PRD §24 dan bagian domain terkait; AGENTS serta architecture berlaku pa
 
 | ID | Status | Task | Dependensi | Kriteria selesai | PIC | Bukti / catatan |
 |---|---|---|---|---|---|---|
-| M1-01 | TODO | Monorepo dan tooling | — | apps/web dan apps/api berjalan lokal; pnpm/Go Modules serta versi kompatibel dikunci. | — | — |
+| M1-01 | DONE | Monorepo dan tooling | — | apps/web dan apps/api berjalan lokal; pnpm/Go Modules serta versi kompatibel dikunci. | Codex | 2026-10-29 WITA: apps/web, apps/api/cmd/server, package.json, pnpm-workspace.yaml, pnpm-lock.yaml, go.mod/go.sum, runtime pins dan scripts tersedia. Node 24.22.2/pnpm 11.10.0/Go 1.27.3 terverifikasi; pnpm quality, frozen install, smoke dan Chrome desktop lulus. Unit test bisnis belum ada; detail bukti di bawah, README dan ADR-001. Tidak lanjut M1-02. |
 | M1-02 | TODO | Boundary backend dan konfigurasi | M1-01 | Router Chi reusable di server lokal/adapter Vercel; config fail-closed, request ID, errors, timeout dan log teredaksi. | — | — |
 | M1-03 | TODO | Migration runner dan database dasar | M1-02 | Users, sessions, audit, settings, rate limits tersedia; audit belum memiliki event_id sampai M4 sesuai staging PRD §13.5; direct migration terpisah pooled runtime; audit append-only. | — | — |
 | M1-04 | TODO | OpenAPI baseline dan API client | M1-02 | Auth/users/settings/health terdokumentasi; generated types, envelope/errors/CSRF terpusat dan contract validation tersedia. | — | — |
@@ -75,6 +75,22 @@ Sumber: PRD §24 dan bagian domain terkait; AGENTS serta architecture berlaku pa
 | M1-10 | TODO | Spike deployment dan pairing environment | M1-06, M1-09 | Dua project Vercel; nested Go routes/query/body, Cookie/Set-Cookie dan CSRF melalui proxy terbukti; preview DB/API terpisah, cron/push OFF. | — | — |
 | M1-11 | TODO | Catat keputusan runtime dan biaya | M1-10 | ADR adapter/PWA/version/limits/pooling tersedia; paket bisnis dan kebutuhan cron diverifikasi, biaya/budget dicatat tanpa asumsi gratis. | — | — |
 | M1-GATE | TODO | Acceptance milestone | Seluruh task M1 | Dua sesi beda role; Go/Chi Vercel dan cookie/CSRF proxy terbukti; DB preview terpisah; reset/last-supervisor lulus; keputusan biaya tercatat. | — | — |
+
+### Bukti M1-01 — 29 Oktober 2026 WITA
+
+Seluruh command memakai toolchain lokal yang diaktifkan sesuai [README](README.md). Source dan pilihan versi dijelaskan pada [ADR-001](architecture-decisions.md). Tidak ada commit, push, deploy, migration, akses DB, atau pekerjaan M1-02.
+
+| Pemeriksaan | Command / metode aktual | Hasil dan batas verifikasi |
+|---|---|---|
+| Install reproducible | `pnpm install --frozen-lockfile --offline` | PASS; pin exact cocok lockfile, cache tersedia pada mesin ini. Clone baru memakai install frozen tanpa --offline. |
+| Quality lokal | `pnpm quality` | PASS; Node/Go pins, svelte-check 0 error/0 warning, gofmt check, go vet ./..., Prettier/ESLint, Vitest, go test ./..., build web adapter Vercel dan binary Go. Vitest/go test belum memiliki unit test bisnis; tidak dihitung sebagai coverage domain. |
+| Check setelah perapian akhir | `pnpm check:api`; `pnpm --filter @marketing-workspace/web exec prettier --check package.json` | PASS; gofmt memeriksa seluruh folder API, manifest web akhir sesuai format. |
+| Integritas Go Modules | `go mod verify` dari apps/api | PASS; all modules verified. |
+| Runtime lama ditolak | `/usr/local/bin/node scripts/check-tooling.mjs` pada Node 24.14.0 | PASS untuk uji negatif; keluar 1 dengan instruksi memakai 24.22.2. Build/check positif memakai Node 24.22.2. |
+| Startup lokal | `pnpm dev:web --strictPort`, `pnpm dev:api`, lalu `pnpm test:smoke` | PASS; SSR web 200 berbahasa Indonesia pada 127.0.0.1:5173; server Go/Chi merespons 404 yang diharapkan pada 127.0.0.1:8080 karena belum ada endpoint produk. Memerlukan izin loopback di sandbox sesi ini. |
+| Visual | Chrome desktop: buka web lokal dan periksa screenshot | PASS untuk halaman fondasi light mode, judul/copy Indonesia, tanpa data demo. Warning hydration favicon tercatat ketika href menjadi SVG dengan atribut data-codex-favicon-badge yang tidak berasal dari source proyek; bukan klaim runtime tanpa warning. Bukan UAT produk atau uji perangkat mobile. |
+| Audit dependency frontend | `pnpm audit --audit-level high`; rincian via `pnpm audit --json` dan `pnpm view deepmerge version --json` | PASS untuk ambang high; 0 high/critical, 1 low pada dependency build, dilacak BUG-001. Patch belum diterbitkan di registry saat pemeriksaan. |
+| Svelte autofixer / cloud / domain | Pemeriksaan ketersediaan tool; scope M1-01 | NOT RUN: autofixer tidak tersedia (diganti compiler/typecheck). CI, deployment, DB, auth, PWA/push dan domain belum diimplementasikan/diuji. |
 
 ## M2 — Task & Direct Completion
 
@@ -172,7 +188,7 @@ Tidak ada bug implementasi atau blocker yang telah diverifikasi pada baseline. P
 
 | ID | Status | Jenis | Ringkasan / keputusan yang dibutuhkan | Terkait | PIC | Resolusi / bukti |
 |---|---|---|---|---|---|---|
-| DEC-001 | TODO | Keputusan | Adapter, Go routing, cookie proxy, limits/region dan pasangan preview | M1-10, M1-11 | — | Catat bukti spike dalam architecture-decisions.md |
+| DEC-001 | TODO | Keputusan | Adapter, Go routing, cookie proxy, limits/region dan pasangan preview | M1-10, M1-11 | — | ADR-001 mencatat versi dan adapter web untuk build lokal M1-01 saja; spike Go/cloud, cookies, limits dan preview belum dibuktikan. |
 | DEC-002 | TODO | Keputusan | OQ-01: paket bisnis, budget/pemilik akun dan biaya; OQ-09: interval cron dan keterlambatan reminder yang diterima | M1-11, M5-06, M7-06, M7-08 | — | Spike/biaya dicatat M1; OQ-01 sebelum production/cron berbayar; OQ-09 sebelum reminder M5 di production. Verifikasi aktual, tanpa nominal tebakan. |
 | DEC-003 | TODO | Data | OQ-06: sumber/cakupan Hijriyah Indonesia dan fallback yang layak rilis | M4-04, M4-GATE, M7-07 | — | Putuskan pada gate M4; provenance/fixtures serta keterbatasan harus jelas. |
 | DEC-004 | TODO | Operasional | OQ-08: retensi, akses recovery, backup storage serta target RPO/RTO | M7-05, M7-06, M7-08 | — | Default PRD dikonfirmasi dan dibuktikan sebelum production. |
@@ -182,8 +198,9 @@ Tidak ada bug implementasi atau blocker yang telah diverifikasi pada baseline. P
 | DEC-008 | TODO | Produk | OQ-04: creator boleh mematikan Requires Review dengan alasan/history | M3-05, M3-GATE | — | Default ya; PIC non-creator tidak boleh. Konfirmasi sebelum UAT M3. |
 | DEC-009 | TODO | Produk | OQ-05: checklist wajib selesai sebelum complete/submit, link tidak wajib | M2-05, M2-08, M2-GATE | — | Default semua checklist checked; konfirmasi sebelum UAT M2. |
 | DEC-010 | TODO | Produk | OQ-10: seluruh pengguna aktif boleh komentar, append-only | M2-04, M2-08, M2-GATE | — | Konfirmasi sebelum UAT M2; tidak memberi izin edit/hapus komentar. |
+| BUG-001 | TODO | Keamanan dependency | Expected: dependency build tanpa advisory deepmerge; actual: plugin Svelte membawa deepmerge 4.3.1, advisory low GHSA-gcqx-w48m-w2h4 (prototype poisoning). Reproduksi: pnpm audit --json; jalur melalui @sveltejs/vite-plugin-svelte 7.3.1. | M1-09, M7-02 | Codex | Registry latest masih 4.3.1 pada 2026-10-29; advisory menyebut patch ≥4.3.2. Update transitif saat patch tersedia dan ulang audit/check/build. Tidak ada high/critical; tidak mengubah dependency sendiri atau menyembunyikan temuan. Tidak menghalangi acceptance scaffold lokal M1-01. |
 
-Issue baru memakai ID stabil `BUG-001`, `BLK-001`, atau `DEC-011` berikutnya; jangan daur ulang ID. Tautkan task terdampak. Bug menulis expected/actual, langkah reproduksi, dampak dan bukti. Blocker menulis penyebab/aksi pembuka/owner; keputusan menulis alternatif dan hasil di ADR. Status menggunakan vocabulary tracker yang sama; VERIFY untuk fix/keputusan yang belum dibuktikan. Jangan menyimpan credential, data produksi, atau screenshot sensitif dalam tracker.
+Issue baru memakai ID stabil `BUG-002`, `BLK-001`, atau `DEC-011` berikutnya; jangan daur ulang ID. Tautkan task terdampak. Bug menulis expected/actual, langkah reproduksi, dampak dan bukti. Blocker menulis penyebab/aksi pembuka/owner; keputusan menulis alternatif dan hasil di ADR. Status menggunakan vocabulary tracker yang sama; VERIFY untuk fix/keputusan yang belum dibuktikan. Jangan menyimpan credential, data produksi, atau screenshot sensitif dalam tracker.
 
 Jika task dipecah, pertahankan ID induk dan gunakan suffix `M2-03a`/`M2-03b`, dengan status `induk → anak` dijelaskan. Hitung hanya leaf task pada ringkasan agar tidak double count; gate tetap tidak dihitung. Task baru harus punya milestone, sumber, acceptance dan dependensi. Pembatalan scope harus merujuk keputusan eksplisit, bukan dipakai untuk menghapus kegagalan acceptance.
 
@@ -193,5 +210,6 @@ Jika task dipecah, pertahankan ID induk dan gunakan suffix `M2-03a`/`M2-03b`, de
 |---|---|---|---|
 | 2026-10-28 | TRACKER | Baseline TODO.md dibuat dari tiga dokumen; implementasi belum diverifikasi | Mulai M1-01; seluruh task/gate implementasi TODO |
 | 2026-10-29 | DOCS | Codex menyelaraskan tujuh dokumen: seluruh Markdown/rujukan di root sesuai permintaan pengguna; guard PIC M2/review M3/event M4, staging migration/FK/completion CHECK, pengecualian version komentar, dan pemetaan seluruh OQ ke DEC-002–DEC-010. | PASS pemeriksaan Python inline: 10 tautan lokal, tabel/fence/whitespace, 53 task/7 gate/dependensi dan 10 OQ terpetakan. PASS validasi YAML/frontmatter SKILL via Ruby/Psych; validator quick_validate.py tidak dapat berjalan karena PyYAML tidak tersedia. Implementasi tetap 0/53, seluruh gate dan keputusan produk tetap TODO; berikutnya M1-01. |
+| 2026-10-29 | M1-01 | Codex menyelesaikan monorepo/tooling lokal: TODO → IN_PROGRESS → DONE. Node awal 24.14.0 diganti untuk eksekusi proyek dengan toolchain lokal 24.22.2 setelah verifikasi advisory resmi; Go 1.27.3 disiapkan lokal. | PASS quality/frozen install/smoke/Chrome desktop; unit bisnis belum ada. BUG-001 mencatat satu advisory low build. Progres 1/53 (1,9%); M1 1/11 (9,1%); 0/7 gate. M1-02 belum dimulai; tidak commit/push/deploy. |
 
 Tambahkan satu baris ringkas per perubahan bermakna; status terkini tetap di tabel task. Log tidak menggantikan bukti. Saat bug membuka kembali pekerjaan DONE, ubah task terdampak ke TODO/IN_PROGRESS/BLOCKED sesuai kondisi, tautkan BUG, hitung ulang ringkasan, dan buka kembali gate bila acceptance milestone tidak lagi terpenuhi. Gate yang dibuka kembali menahan milestone lanjutan sampai dampaknya dinilai.

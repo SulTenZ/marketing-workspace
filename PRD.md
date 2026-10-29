@@ -236,8 +236,7 @@ marketing-workspace/
       src/lib/api/                  # typed client dari OpenAPI
       src/service-worker.ts         # satu SW: cache publik + push
       static/icons/
-      svelte.config.js
-      vite.config.ts
+      vite.config.ts                # konfigurasi SvelteKit 3 + Svelte/Vite
       vercel.json
       package.json
     api/
